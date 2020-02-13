@@ -1,9 +1,9 @@
 package com.ie.project;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class DependencyParser {
 
@@ -11,13 +11,29 @@ public class DependencyParser {
         if(dependencies == null || dependencies.length < 1){
             return null;
         }
-        Map<String, List<String>> adjList = new HashMap<>();
+        Map<String, String> adjList = new HashMap<>();
         for(String dep : dependencies){
             String[] pair = dep.split(": ");
+            String lib = pair[0];
             String dependency = pair[1];
-            List<String> dependants = adjList.getOrDefault(dependency, new ArrayList<>());
-            dependants.add(pair[0]);
-            adjList.put(dependency, dependants);
+
+            //Check for a cycle in the dependencies
+            if(adjList.containsKey(dependency)){
+                Set<String> visited = new HashSet<>();
+                String check = dependency;
+                while(true){
+                    if(visited.contains(check)){
+                        return null;
+                    }
+                    if(!adjList.containsKey(check)){
+                        break;
+                    }
+                    visited.add(check);
+                    check = adjList.get(check);
+                }
+            }else{
+                adjList.put(lib, dependency);
+            }
         }
 
         return null;
