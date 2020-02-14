@@ -1,18 +1,27 @@
 package com.ie.project;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DependencyParser {
 
-    public String parse(String[] dependencies){
+    /**
+     * Will convert an array of dependencies into a string of package names in the order they should be installed
+     * @param dependencies array of strings containing names of packages and their dependencies
+     * @return string of all package names and the order they should be installed in
+     * @throws IllegalArgumentException if incorrectly formatted input is submitted, or a cyclic dependency is found
+     */
+    public String parse(String[] dependencies) throws IllegalArgumentException{
         if(dependencies == null || dependencies.length < 1){
-            return null;
+            throw new IllegalArgumentException("Dependency array may not be null or empty");
         }
         Map<String, Set<String>> adjList = buildAdjacencyList(dependencies);
-        return adjList != null ? createDependencyString(adjList) : null;
+        return createDependencyString(adjList);
     }
 
-    private Map<String, Set<String>> buildAdjacencyList(String[] dependencies){
+    private Map<String, Set<String>> buildAdjacencyList(String[] dependencies) throws IllegalArgumentException{
         Map<String, Set<String>> adjList = new HashMap<>();
         for(String dep : dependencies){
             String[] pair = dep.split(": ");
@@ -26,7 +35,7 @@ public class DependencyParser {
                 addDependency(dependency, lib, adjList);
                 while(true){
                     if(visited.contains(check)){
-                        return null;
+                        throw new IllegalArgumentException("Cyclic dependency found");
                     }
                     if(!adjList.containsKey(check)){
                         break;
@@ -50,6 +59,8 @@ public class DependencyParser {
     private String createDependencyString(Map<String, Set<String>> adjList) {
         StringBuilder sb = new StringBuilder();
         Set<String> heads = adjList.get("");
+        //There should be at least one library without any dependencies
+        if(heads == null) throw new IllegalArgumentException("All packages must have their required dependencies listed. ex: [\"kittens: ice\", \"ice: \"]");
 
         for(String lib : heads){
             String current = lib;
