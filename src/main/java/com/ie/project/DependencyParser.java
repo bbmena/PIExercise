@@ -9,7 +9,7 @@ public class DependencyParser {
             return null;
         }
         Map<String, Set<String>> adjList = buildAdjacencyList(dependencies);
-        return createDependencyString(adjList);
+        return adjList != null ? createDependencyString(adjList) : null;
     }
 
     private Map<String, Set<String>> buildAdjacencyList(String[] dependencies){
