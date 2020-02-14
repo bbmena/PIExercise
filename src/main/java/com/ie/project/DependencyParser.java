@@ -43,33 +43,30 @@ public class DependencyParser {
         adjList.put(dependency, libs);
     }
 
-//    private String createDepString(Map<String, String> adjList) {
     private String createDepString(Map<String, Set<String>> adjList) {
-//        List<String> depList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        Stack<String> stack = new Stack<>();
-        String temp = adjList.keySet().iterator().next();
-//        while(!adjList.isEmpty()){
-//            if(adjList.get(temp).equals("")){
-//                sb.append(temp).append(", ");
-//                adjList.remove(temp);
-//                temp = adjList.keySet().iterator().next();
-//            } else{
-//                stack.push(temp);
-//                stack.push(adjList.get(temp));
-//                adjList.remove(temp);
-//            }
-//            while(!stack.isEmpty()){
-//                if(adjList.containsKey(stack.peek())){
-//                    stack.push(adjList.get(stack.peek()));
-//                    adjList.remove(stack.peek());
-//                } else {
-//                    sb.append(stack.pop()).append(", ");
-//                }
-//            }
-//        }
+        Set<String> heads = adjList.get("");
 
-        sb.setLength(sb.length()-2);
+        for(String lib : heads){
+            String current = lib;
+            while(current != null){
+                if(adjList.get(current) != null){
+                    for (String dep : adjList.get(current)) {
+                        if(dep.equals("")){
+                            current = null;
+                        } else {
+                            sb.append(current).append(", ");
+                            current = dep;
+                        }
+                    }
+                }else{
+                    sb.append(current).append(", ");
+                    current = null;
+                }
+            }
+        }
+
+        if(sb.length() > 2) sb.setLength(sb.length()-2);
         return sb.toString();
     }
 }
