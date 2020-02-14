@@ -8,6 +8,11 @@ public class DependencyParser {
         if(dependencies == null || dependencies.length < 1){
             return null;
         }
+        Map<String, Set<String>> adjList = buildAdjacencyList(dependencies);
+        return createDependencyString(adjList);
+    }
+
+    private Map<String, Set<String>> buildAdjacencyList(String[] dependencies){
         Map<String, Set<String>> adjList = new HashMap<>();
         for(String dep : dependencies){
             String[] pair = dep.split(": ");
@@ -33,8 +38,7 @@ public class DependencyParser {
                 addDependency(dependency, lib, adjList);
             }
         }
-
-        return createDepString(adjList);
+        return adjList;
     }
 
     private void addDependency(String dependency, String library, Map<String, Set<String>> adjList){
@@ -43,7 +47,7 @@ public class DependencyParser {
         adjList.put(dependency, libs);
     }
 
-    private String createDepString(Map<String, Set<String>> adjList) {
+    private String createDependencyString(Map<String, Set<String>> adjList) {
         StringBuilder sb = new StringBuilder();
         Set<String> heads = adjList.get("");
 
@@ -65,7 +69,6 @@ public class DependencyParser {
                 }
             }
         }
-
         if(sb.length() > 2) sb.setLength(sb.length()-2);
         return sb.toString();
     }
