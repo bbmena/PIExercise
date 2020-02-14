@@ -18,7 +18,7 @@ public class PIExerciseTests {
     void parseDependency(String[] raw, String valid){
         DependencyParser parser = new DependencyParser();
         String result = parser.parse(raw);
-        assertEquals(result, valid);
+        assertEquals(valid, result);
     }
 
     @Test
@@ -59,10 +59,11 @@ public class PIExerciseTests {
                 ),
                 Arguments.arguments(
                         new String[]{"KittenService: ", "Leetmeme: Cyberportal", "Cyberportal: Ice", "CamelCaser: KittenService", "Fraudstream: Leetmeme", "Ice: "},
-                        "KittenService, Ice, Cyberportal, Leetmeme, CamelCaser, Fraudstream"
+                        "Ice, Cyberportal, Leetmeme, Fraudstream, KittenService, CamelCaser"
                 ),
                 Arguments.arguments(new String[]{""}, ""),
-                Arguments.arguments(new String[]{"KittenService"}, "KittenService")
+                Arguments.arguments(new String[]{"KittenService"}, "KittenService"),
+                Arguments.arguments(new String[]{"KittenService: Ice", "Leetmeme: Ice", "Ice: "}, "Ice, Leetmeme, KittenService")
         );
     }
 }
